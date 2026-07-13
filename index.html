@@ -8,9 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy: #22395E;
-    --navy-dark: #142338;
-    --navy-mid: #2E4A75;
+    --navy: #16295E;
+    --navy-dark: #0C1638;
+    --navy-mid: #1E3A8C;
+    --navy-light: #74ACDF;
     --bg: #F3F5F8;
     --panel: #FFFFFF;
     --ink: #1A2A3D;
@@ -35,7 +36,7 @@
   /* ---------- Top bar ---------- */
   .topbar{
     background: linear-gradient(120deg, var(--navy-dark) 0%, var(--navy) 55%, var(--navy-mid) 100%);
-    color:#fff; padding:26px 30px 58px;
+    color:#fff; padding:26px 30px 34px;
     position:relative; overflow:hidden;
   }
   .topbar::before{
@@ -88,7 +89,7 @@
   .error-card .dot.off{display:inline-block;}
 
   /* KPI strip */
-  .kpis{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:-30px; position:relative; z-index:2;}
+  .kpis{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:22px; position:relative; z-index:2;}
   .kpi{background:var(--panel); border-radius:var(--radius); padding:17px 18px; box-shadow:0 8px 22px -14px rgba(20,35,56,0.28); border:1px solid var(--line);}
   .kpi .num{font-family:var(--font-display); font-size:27px; font-weight:800; color:var(--navy-dark); line-height:1.1;}
   .kpi .lbl{font-size:11.5px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin-top:5px; font-weight:600;}
@@ -118,26 +119,26 @@
   .result-count{font-size:12.5px; color:var(--ink-soft); margin-left:auto; white-space:nowrap;}
 
   /* Areas / stores grid */
-  .area-block{margin-top:28px;}
-  .area-head{display:flex; align-items:baseline; gap:10px; margin-bottom:12px;}
-  .area-head h2{font-size:14.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--navy-dark); font-weight:700;}
+  .area-block{margin-top:30px;}
+  .area-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .area-head .dot-accent{width:9px; height:9px; border-radius:50%; background:var(--accent, var(--navy)); flex-shrink:0;}
+  .area-head h2{font-size:14.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--accent, var(--navy-dark)); font-weight:700;}
   .area-head .count{font-size:12px; color:var(--ink-soft);}
   .area-head .line{flex:1; height:1px; background:var(--line);}
 
   .store-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px;}
   .store-card{
-    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
-    padding:14px 16px; cursor:pointer; text-align:left; font-family:var(--font-body);
-    transition:border-color .12s, box-shadow .12s, transform .08s;
+    background:var(--panel); border:1px solid var(--line); border-top:3px solid var(--accent, var(--navy));
+    border-radius:var(--radius); padding:14px 16px; cursor:pointer; text-align:left; font-family:var(--font-body);
+    transition:box-shadow .12s, transform .08s;
   }
-  .store-card:hover{border-color:var(--navy); box-shadow:0 6px 16px -10px rgba(34,57,94,0.32);}
-  .store-card.active{border-color:var(--navy); background:var(--navy-soft);}
+  .store-card:hover{box-shadow:0 8px 18px -10px rgba(20,35,56,0.35); transform:translateY(-1px);}
+  .store-card.active{background:var(--navy-soft);}
   .store-card .sname{font-weight:700; font-size:14px; color:var(--ink);}
-  .store-card .scount-row{display:flex; align-items:center; gap:8px; margin-top:8px;}
-  .pill-bar{display:flex; gap:3px; flex-wrap:wrap; max-width:120px;}
-  .pill{width:7px; height:14px; border-radius:3px; background:var(--navy); opacity:.85;}
-  .pill.bloq{background:var(--danger);}
-  .store-card .scount{font-family:var(--mono); font-size:12px; color:var(--ink-soft);}
+  .store-card .scount-row{display:flex; align-items:center; gap:8px; margin-top:7px;}
+  .store-card .scount{font-size:12.5px; color:var(--ink-soft);}
+  .store-card .scount b{color:var(--accent, var(--navy)); font-weight:700;}
+  .store-card .scount .bloq-txt{color:var(--danger); font-weight:700;}
 
   /* Detail panel */
   .detail-panel{
@@ -423,12 +424,19 @@
     `;
   }
 
+  const AREA_PALETTE = ['#3B5FE2', '#27AE60', '#E67E22', '#8B5CF6', '#14B8A6', '#E1497A'];
+  function colorForArea(areaName, orderedNames){
+    const idx = orderedNames.indexOf(areaName);
+    return AREA_PALETTE[idx % AREA_PALETTE.length];
+  }
+
   function renderAreaBlocks(filtered){
     const byArea = {};
     filtered.forEach(r => { (byArea[r.area] = byArea[r.area]||[]).push(r); });
     const areaNames = Object.keys(byArea).sort((a,b)=>a.localeCompare(b,'es'));
 
     el('areaBlocks').innerHTML = areaNames.map(area => {
+      const accent = colorForArea(area, areaNames);
       const rowsInArea = byArea[area];
       const byTienda = {};
       rowsInArea.forEach(r => { (byTienda[r.tienda] = byTienda[r.tienda]||[]).push(r); });
@@ -437,21 +445,20 @@
       const cards = tiendaNames.map(t => {
         const list = byTienda[t];
         const bloqCount = list.filter(x=>x.nivelCargo.includes('BLOQUEO')).length;
-        const pills = list.map(x => `<span class="pill ${x.nivelCargo.includes('BLOQUEO')?'bloq':''}"></span>`).join('');
         const isActive = selectedTienda === t;
         return `
-          <button class="store-card ${isActive?'active':''}" data-tienda="${t.replace(/"/g,'&quot;')}">
+          <button class="store-card ${isActive?'active':''}" style="--accent:${accent}" data-tienda="${t.replace(/"/g,'&quot;')}">
             <div class="sname">${t}</div>
             <div class="scount-row">
-              <div class="pill-bar">${pills}</div>
-              <div class="scount">${list.length} colab.${bloqCount?` · ${bloqCount} bloq.`:''}</div>
+              <div class="scount"><b>${list.length}</b> colab.${bloqCount?` · <span class="bloq-txt">${bloqCount} bloq.</span>`:''}</div>
             </div>
           </button>`;
       }).join('');
 
       return `
         <div class="area-block">
-          <div class="area-head">
+          <div class="area-head" style="--accent:${accent}">
+            <span class="dot-accent"></span>
             <h2>${area}</h2>
             <span class="count">${rowsInArea.length} colaboradores · ${tiendaNames.length} tiendas</span>
             <div class="line"></div>
