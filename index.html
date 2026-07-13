@@ -128,16 +128,16 @@
 
   .store-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px;}
   .store-card{
-    background:var(--panel); border:1px solid var(--line); border-top:3px solid var(--accent, var(--navy));
+    background:var(--panel); border:1px solid var(--line);
     border-radius:var(--radius); padding:14px 16px; cursor:pointer; text-align:left; font-family:var(--font-body);
-    transition:box-shadow .12s, transform .08s;
+    transition:border-color .12s, box-shadow .12s, transform .08s;
   }
-  .store-card:hover{box-shadow:0 8px 18px -10px rgba(20,35,56,0.35); transform:translateY(-1px);}
-  .store-card.active{background:var(--navy-soft);}
+  .store-card:hover{border-color:var(--navy); box-shadow:0 8px 18px -10px rgba(20,35,56,0.3); transform:translateY(-1px);}
+  .store-card.active{border-color:var(--navy); background:var(--navy-soft);}
   .store-card .sname{font-weight:700; font-size:14px; color:var(--ink);}
   .store-card .scount-row{display:flex; align-items:center; gap:8px; margin-top:7px;}
   .store-card .scount{font-size:12.5px; color:var(--ink-soft);}
-  .store-card .scount b{color:var(--accent, var(--navy)); font-weight:700;}
+  .store-card .scount b{color:var(--navy); font-weight:700;}
   .store-card .scount .bloq-txt{color:var(--danger); font-weight:700;}
 
   /* Detail panel */
@@ -447,7 +447,7 @@
         const bloqCount = list.filter(x=>x.nivelCargo.includes('BLOQUEO')).length;
         const isActive = selectedTienda === t;
         return `
-          <button class="store-card ${isActive?'active':''}" style="--accent:${accent}" data-tienda="${t.replace(/"/g,'&quot;')}">
+          <button class="store-card ${isActive?'active':''}" data-tienda="${t.replace(/"/g,'&quot;')}">
             <div class="sname">${t}</div>
             <div class="scount-row">
               <div class="scount"><b>${list.length}</b> colab.${bloqCount?` · <span class="bloq-txt">${bloqCount} bloq.</span>`:''}</div>
